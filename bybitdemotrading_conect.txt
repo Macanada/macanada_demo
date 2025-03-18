@@ -1,0 +1,142 @@
+### Key Points
+- Parece provável que para se conectar à API da Bybit Demo Trading usando chaves geradas no ambiente de demo, você deve usar os endpoints específicos para demo: REST API em [api-demo.bybit.com](https://api-demo.bybit.com) e WebSocket em [wss://stream-demo.bybit.com](wss://stream-demo.bybit.com).
+- A evidência sugere que as chaves API geradas no demo trading são exclusivas para esse ambiente e não devem ser usadas com endpoints de trading real.
+- É necessário seguir o procedimento padrão de autenticação da Bybit, usando a chave e o segredo para assinar requisições.
+
+---
+
+### Passos para Conexão
+**Acesse a Plataforma de Demo Trading**  
+Faça login na Bybit e passe o mouse sobre o avatar do usuário, clicando em "Demo Trading" para alternar para a conta de demo.
+
+**Gere as Chaves API**  
+Dentro da plataforma de demo, vá para as configurações da conta ou perfil, encontre a seção de API e gere novas chaves (chave e segredo).
+
+**Use os Endpoints de Demo**  
+Utilize as chaves geradas para fazer chamadas à API de demo nos seguintes endpoints:  
+- REST API: [api-demo.bybit.com](https://api-demo.bybit.com)  
+- WebSocket: [wss://stream-demo.bybit.com](wss://stream-demo.bybit.com)
+
+**Autentique as Requisições**  
+Siga o procedimento padrão de autenticação da Bybit, usando a chave API e o segredo para assinar suas requisições. Consulte a documentação oficial para detalhes: [Bybit API V5 Documentation](https://bybit-exchange.github.io/docs/v5/).
+
+**Nota Importante**  
+Lembre-se de que as chaves API do demo trading são específicas para esse ambiente e não devem ser usadas com os endpoints da API de trading real, o que pode evitar problemas de segurança.
+
+---
+
+---
+
+### Relatório Detalhado
+Este relatório fornece uma análise detalhada sobre como se conectar à API da Bybit Demo Trading usando chaves API geradas dentro do ambiente de demo, com base em informações disponíveis na documentação oficial e em guias de suporte. Ele inclui todos os passos, considerações e detalhes relevantes para garantir uma conexão bem-sucedida, além de esclarecimentos sobre as diferenças entre os ambientes de demo e trading real.
+
+#### Contexto e Definições
+A Bybit oferece uma plataforma de demo trading, um ambiente simulado que replica condições de mercado reais para prática, usando ativos virtuais. Esse ambiente é independente e possui seu próprio ID de usuário. A API da Bybit permite interações programáticas, como consultas de dados de mercado, ordens automáticas e gerenciamento de contas. Para o demo trading, há endpoints específicos, e as chaves API geradas nesse ambiente são exclusivas para uso com esses endpoints.
+
+#### Passos Detalhados para Gerar e Usar Chaves API
+1. **Acesso à Conta de Demo Trading**  
+   - Faça login na plataforma Bybit.  
+   - Passe o mouse sobre o avatar do usuário no canto superior direito e clique em "Demo Trading" para alternar para a conta de demo. Isso é confirmado pela documentação, que menciona que o demo trading é um módulo isolado com seu próprio ID de usuário ([Bybit API Documentation for Demo Trading](https://bybit-exchange.github.io/docs/v5/demo)).
+
+2. **Geração de Chaves API no Ambiente de Demo**  
+   - Dentro da plataforma de demo, navegue para as configurações da conta ou perfil.  
+   - Localize a seção de API (geralmente acessada clicando em "API" após passar o mouse sobre o avatar).  
+   - Gere novas chaves API, que consistem em uma chave (API key) e um segredo (API secret). A documentação menciona que, ao criar a chave no demo trading, ela deve ser usada com os endpoints de demo ([Bybit API Documentation for Demo Trading](https://bybit-exchange.github.io/docs/v5/demo)).
+
+3. **Uso das Chaves API com Endpoints de Demo**  
+   - As chaves geradas no demo trading são específicas para esse ambiente e devem ser usadas com os seguintes endpoints:  
+     - REST API: [api-demo.bybit.com](https://api-demo.bybit.com)  
+     - WebSocket: [wss://stream-demo.bybit.com](wss://stream-demo.bybit.com)  
+   - Isso é destacado na documentação, que especifica que o demo trading usa domínios diferentes, como "api-demo.bybit.com" para REST e "wss://stream-demo.bybit.com" para WebSocket, suportando apenas streams privados, com dados públicos idênticos aos do mainnet ([Bybit API Documentation for Demo Trading](https://bybit-exchange.github.io/docs/v5/demo)).
+
+4. **Processo de Autenticação**  
+   - Para fazer chamadas à API, siga o procedimento padrão de autenticação da Bybit, que envolve:  
+     - Incluir a chave API nos cabeçalhos das requisições.  
+     - Assinar a requisição (corpo, parâmetros ou método, dependendo do endpoint) usando o segredo API, geralmente com HMAC-SHA256, conforme descrito na documentação geral da API.  
+   - Não há menção de diferenças no método de autenticação entre demo e trading real, sugerindo que o processo é o mesmo, mas aplicado aos endpoints de demo. Para detalhes, consulte [Bybit API V5 Documentation](https://bybit-exchange.github.io/docs/v5/).
+
+#### Considerações Importantes
+- **Isolamento do Ambiente de Demo**: O demo trading é um módulo isolado, e as chaves API geradas nele não devem ser usadas com os endpoints da API de trading real (mainnet, como "api.bybit.com"). Isso é crucial para evitar problemas de segurança ou erros, como mencionado na documentação ([Bybit API Documentation for Demo Trading](https://bybit-exchange.github.io/docs/v5/demo)).
+- **Diferenças entre Demo e Testnet**: A documentação alerta que usar o serviço de demo trading no site de testnet é desnecessário, e as chaves não devem ser criadas lá, reforçando que o foco é no ambiente de demo mainnet ([Bybit API Documentation for Demo Trading](https://bybit-exchange.github.io/docs/v5/demo)).
+- **Suporte a Subcontas**: O demo trading também é suportado em subcontas, com contas de demo separadas das contas principais, conforme indicado em FAQs ([FAQ — Demo Trading](https://www.bybit.com/en/help-center/article/FAQ-Demo-Trading)).
+
+#### Tabela de Comparação: Endpoints de Demo vs. Mainnet
+Abaixo está uma tabela comparativa dos endpoints para demo trading e mainnet, com base nas informações coletadas:
+
+| **Tipo de Endpoint** | **Demo Trading**                          | **Mainnet (Trading Real)**         |
+|-----------------------|-------------------------------------------|------------------------------------|
+| REST API              | [api-demo.bybit.com](https://api-demo.bybit.com) | api.bybit.com                     |
+| WebSocket             | [wss://stream-demo.bybit.com](wss://stream-demo.bybit.com) | wss://stream.bybit.com            |
+| Notas                 | Suporta apenas streams privados; dados públicos idênticos ao mainnet | Inclui streams públicos e privados |
+
+#### Detalhes Adicionais e Recursos
+- A documentação oficial da Bybit, especialmente a seção V5, fornece informações detalhadas sobre como fazer chamadas à API, incluindo exemplos de autenticação e endpoints. É recomendável consultar [Bybit API V5 Documentation](https://bybit-exchange.github.io/docs/v5/) para implementações específicas, como código em Python, JavaScript, etc.
+- Um detalhe inesperado é que o WebSocket de demo trading não suporta WS Trade, o que pode limitar certas funcionalidades em comparação com o mainnet, conforme mencionado na documentação ([Bybit API Documentation for Demo Trading](https://bybit-exchange.github.io/docs/v5/demo)).
+- Não há menção de taxas ou limites de taxa específicos para o demo trading na documentação, sugerindo que os limites podem ser os mesmos do mainnet, mas isso deve ser verificado na seção de limites de taxa ([Bybit TR API Documentation](https://www.bybit.com/future-activity/en/developer)).
+
+#### Conclusão
+A conexão à API da Bybit Demo Trading usando chaves geradas no ambiente de demo envolve acessar a conta de demo, gerar chaves específicas, e usar os endpoints de demo para REST e WebSocket, seguindo o processo padrão de autenticação. É essencial manter as chaves seguras e usá-las apenas no ambiente de demo para evitar problemas. Para implementações detalhadas, a documentação oficial é a fonte mais confiável.
+
+---
+
+### Key Citations
+- [Demo Trading Service Bybit API Documentation](https://bybit-exchange.github.io/docs/v5/demo)
+- [Introduction to Bybit API V5 Documentation](https://bybit-exchange.github.io/docs/v5/intro)
+- [FAQ Demo Trading Bybit Help Center](https://www.bybit.com/en/help-center/article/FAQ-Demo-Trading)
+
+
+exemplo de código Python:
+
+import requests
+import hmac
+import hashlib
+import time
+import json
+
+# Configurações da API
+API_KEY = "SUA_CHAVE_API_AQUI"  # Substitua pela sua chave API do Demo Trading
+API_SECRET = "SEU_SEGREDO_API_AQUI"  # Substitua pelo seu segredo API do Demo Trading
+BASE_URL = "https://api-demo.bybit.com"  # Endpoint da API Demo Trading
+
+# Função para gerar a assinatura da requisição
+def generate_signature(api_secret, params):
+    param_str = ''.join([f"{key}{params[key]}" for key in sorted(params.keys())])
+    return hmac.new(api_secret.encode('utf-8'), param_str.encode('utf-8'), hashlib.sha256).hexdigest()
+
+# Função para fazer uma requisição autenticada
+def bybit_request(endpoint, params):
+    url = f"{BASE_URL}{endpoint}"
+    
+    # Adicionar parâmetros obrigatórios
+    params['api_key'] = API_KEY
+    params['timestamp'] = str(int(time.time() * 1000))  # Timestamp em milissegundos
+    params['recv_window'] = "5000"  # Janela de recebimento padrão (5 segundos)
+    
+    # Gerar assinatura
+    signature = generate_signature(API_SECRET, params)
+    params['sign'] = signature
+    
+    # Fazer a requisição GET
+    response = requests.get(url, params=params)
+    
+    # Verificar resposta
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return {"error": f"Erro {response.status_code}: {response.text}"}
+
+# Testar a conexão obtendo informações da conta
+def test_connection():
+    endpoint = "/v5/account/wallet-balance"
+    params = {
+        "accountType": "UNIFIED"  # Tipo de conta (ajuste conforme necessário: UNIFIED, SPOT, etc.)
+    }
+    
+    result = bybit_request(endpoint, params)
+    print(json.dumps(result, indent=2))
+
+# Executar o teste
+if __name__ == "__main__":
+    print("Testando conexão com a Bybit Demo Trading...")
+    test_connection()
+
