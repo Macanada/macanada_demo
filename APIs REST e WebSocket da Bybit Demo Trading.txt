@@ -1,0 +1,118 @@
+Aqui está um pequeno documento resumindo os pontos cruciais sobre as APIs REST e WebSocket da Bybit Demo Trading para o projeto em Python:
+
+---
+
+**Documento de Referência: APIs REST e WebSocket da Bybit Demo Trading para Bot em Python**
+
+**1. Introdução:**
+
+Este documento resume os aspectos essenciais das APIs REST e WebSocket da Bybit para o ambiente de Demo Trading, com foco nos pontos cruciais para o desenvolvimento de um bot de negociação automatizado em Python.
+
+**2. Ambiente de Demo Trading da Bybit:**
+
+* Utilize o ambiente de Demo Trading para testar suas estratégias sem risco financeiro real.
+* As credenciais (chaves de API) geradas para a Demo Trading são separadas das credenciais da conta real (Mainnet).
+
+**3. API REST (Demo):**
+
+* **URL Base:** `https://api-demo.bybit.com`
+* **Propósito:** Comunicação síncrona (requisição-resposta) para executar ações como enviar ordens, cancelar ordens, consultar saldo, etc.
+* **Endpoints Relevantes:**
+    * **Enviar Ordem:** `/v5/order/create` (Suporta ordens a mercado e limite).
+        * Parâmetros importantes: `category` (spot), `symbol` (BTCUSDT), `side` (Buy/Sell), `orderType` (Market/Limit), `qty` (quantidade da moeda base), `price` (para ordens limite), `timeInForce` (IOC, GTC, etc.).
+    * **Cancelar Ordem:** `/v5/order/cancel` (Requer o `orderId` da ordem a ser cancelada).
+    * **Consultar Saldo:** `/v5/account/wallet-balance` (Para verificar o saldo em USDT).
+* **Autenticação:**
+    * Requer `API_KEY` e `API_SECRET` geradas na interface de Demo Trading da Bybit.
+    * As requisições autenticadas exigem uma assinatura (`X-BAPI-SIGN`) gerada usando o algoritmo HMAC-SHA256.
+    * **Função de Geração de Assinatura (Exemplo):**
+
+        ```python
+        import hmac
+        import hashlib
+        import time
+        import json
+
+        API_KEY = "SUA_CHAVE_DE_API_DEMO"
+        API_SECRET = "SUA_CHAVE_SECRETA_DEMO"
+
+        def generate_signature(secret, params):
+            """Gera a assinatura HMAC SHA256 (Bybit V5)."""
+            param_str = '&'.join([f"{k}={v}" for k, v in sorted(params.items())])
+            sign_payload = f"{time.time_ns() // 1_000_000}{API_KEY}{5000}{param_str}"
+            signature = hmac.new(secret.encode('utf-8'), sign_payload.encode('utf-8'), hashlib.sha256).hexdigest()
+            return signature
+        ```
+    * **Headers Comuns:**
+        * `Content-Type: application/json`
+        * `X-BAPI-SIGN`: A assinatura gerada.
+        * `X-BAPI-SIGN-TYPE: 2`
+        * `X-BAPI-TIMESTAMP`: Timestamp da requisição em milissegundos.
+        * `X-BAPI-RECV-WINDOW`: Janela de recebimento (em ms, geralmente 5000).
+        * `apiKey`: Sua chave de API.
+
+**4. API WebSocket (Demo):**
+
+* **Endpoint (Streams Privados):** `wss://stream-demo.bybit.com/v5/private`
+* **Propósito:** Comunicação assíncrona e bidirecional para receber dados em tempo real (atualizações de ordens, dados de mercado - embora para este projeto estejamos focando em ordens).
+* **Autenticação:**
+    * Requer `API_KEY` e `API_SECRET` da Demo Trading.
+    * A autenticação é feita enviando uma mensagem JSON específica após a conexão.
+    * **Mensagem de Autenticação:**
+
+        ```json
+        {
+            "op": "auth",
+            "args": [API_KEY, expires, signature]
+        }
+        ```
+    * `expires`: Timestamp de expiração em milissegundos (alguns segundos no futuro).
+    * **Geração de Assinatura para WebSocket:**
+
+        ```python
+        import hmac
+        import hashlib
+        import time
+
+        API_KEY = "SUA_CHAVE_DE_API_DEMO"
+        API_SECRET = "SUA_CHAVE_SECRETA_DEMO"
+
+        def generate_websocket_signature():
+            expires = int((time.time() + 5) * 1000)
+            sign_payload = f"GET/realtime{expires}"
+            signature = hmac.new(API_SECRET.encode('utf-8'), sign_payload.encode('utf-8'), hashlib.sha256).hexdigest()
+            return expires, signature
+        ```
+* **Inscrição em Tópicos:**
+    * Para receber atualizações sobre suas ordens, você precisa se inscrever no tópico `"order"`.
+    * **Mensagem de Inscrição:**
+
+        ```json
+        {
+            "op": "subscribe",
+            "args": ["order"]
+        }
+        ```
+* **WS Trade is not supported (Demo):** Você não pode enviar ordens diretamente através do WebSocket no ambiente de demonstração. Use a API REST para isso.
+
+**5. Pontos Cruciais para o Código em Python:**
+
+* **Bibliotecas:** Utilize as bibliotecas `requests` (para API REST) e `websockets` (para API WebSocket).
+* **Assíncrono (`asyncio`):** A API WebSocket é assíncrona, então você precisará usar `asyncio` para gerenciar a conexão e o recebimento de mensagens.
+* **Tratamento de Erros:** Implemente tratamento de erros robusto para lidar com falhas de conexão, erros da API, etc.
+* **Formato JSON:** Tanto a API REST quanto a WebSocket utilizam o formato JSON para enviar e receber dados.
+* **Gerenciamento de Estado:** Seu bot precisará manter o controle do estado das ordens (IDs, status, preços, etc.).
+* **Lógica de Negociação:** Implemente a lógica da sua estratégia de negociação para determinar quando comprar, vender e quando enviar as ordens de recompra.
+* **Monitoramento:** Use o WebSocket para monitorar o status das ordens enviadas via REST em tempo real.
+* **Delays:** Use `time.sleep()` ou `asyncio.sleep()` para introduzir os delays necessários entre as ações.
+
+**6. Fluxo Geral da Estratégia (Conforme Descrito):**
+
+1.  Consultar saldo (REST).
+2.  Se saldo suficiente, enviar ordem de compra a mercado (REST).
+3.  Após delay, enviar ordem de venda limite com lucro (REST).
+4.  Após pequeno delay, enviar ordem de recompra limite (REST).
+5.  Monitorar o status das ordens (WebSocket).
+6.  Implementar a lógica de cancelamento e os loops de recompra/venda conforme a sua estratégia detalhada.
+
+---
